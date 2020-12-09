@@ -105,6 +105,13 @@
     var mTouchEnd = 0;
     var _self = this;
     this.mouseWheelAndKey = function(event) {
+      // Added by MB to check if portfolio screenshot preview is open
+      var preview = document.getElementById('container');
+      if (preview != null) {
+        if (preview.classList.contains('pushback')) {
+          return false;
+        }
+      }
       if (event.deltaY > 0 || event.keyCode == 40) {
         _self.defaults.currentPosition++;
         _self.changeCurrentPosition(_self.defaults.currentPosition);
@@ -119,6 +126,13 @@
       mTouchEnd = 0;
     };
     this.touchEnd = function(event) {
+      // Added by MB to check if portfolio screenshot preview is open
+      var preview = document.getElementById('container');
+      if (preview != null) {
+        if (preview.classList.contains('pushback')) {
+          return false;
+        }
+      }
       mTouchEnd = parseInt(event.changedTouches[0].clientY);
       if (mTouchEnd - mTouchStart > 100 || mTouchStart - mTouchEnd > 100) {
         if (mTouchEnd > mTouchStart) {

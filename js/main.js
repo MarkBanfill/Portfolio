@@ -6,7 +6,7 @@
     $('#backgrounds > *:first-child').addClass('active');
     $('body').show();
     // Screen wipe animation
-    $('.screen-wipe').css('animation','wipe-down .5s ease-out forwards');
+    $('.screen-wipe').css('animation','slide-down-hide .5s ease-out forwards');
   });
 
   $(document).ready(function() {
@@ -21,10 +21,8 @@
     // If body has no class its propably the homepage
     $('body:not([class])').addClass('home');
 
-    // If homepage set background image to nothing
+    // If homepage slow down video
     if (pageIndex == 0 && urlPath == '/markbanfill/') {
-      $('#background').css('background-image', 'url(img/introduction.png)');
-      // Adjust videos
       document.querySelector('#video-container video').playbackRate = 0.5;
     }
 
@@ -68,13 +66,31 @@
   	if($(this).attr('target') == '_blank') {
   		return;
   	}
-  	if($(this).closest('#introduction, #experience, #last-next-container').length) {
+  	if($(this).closest('#introduction, #experience, #development, #portfolio, #last-next-container').length) {
   		return;
   	}
+    // Portfolio screenshots
+    if($(this).hasClass('view-image')) {
+      var fullImage = $(this).attr('href').split('.').shift() + '-full.' + $('#preview img').attr('src').split('.').pop();
+      $('#preview img').attr('src', fullImage);
+      $('#preview').css('z-index', '9');
+      $('#container').addClass('pushback');
+      $('#preview div.frame').css('animation', 'slide-up-show .5s ease-out .7s forwards');
+      setTimeout(function() {$('a.close').show()}, 500);
+      return false;
+    }
+    if($(this).hasClass('close')) {
+      setTimeout(function() {$('#preview').css('z-index', '-1')}, 2000);
+      setTimeout(function() {$('#container').removeClass('pushback')}, 400);
+      $('#preview div.frame').css('animation', 'slide-down-hide .5s ease-out 0s forwards');
+      $('a.close').hide();
+      $('#preview').removeClass('open');
+      return false;
+    }
   	// Else do screen wipe animation and change page
   	var href = $(this).attr('href');
   	setTimeout(function() {window.location = href}, 500);
-  	$('.screen-wipe').css('animation','wipe-up .5s ease-out forwards');
+  	$('.screen-wipe').css('animation','slide-down-show .5s ease-out forwards');
   	return false;
   });
 
@@ -139,6 +155,9 @@
       }
       imageNo++;
     });
+    // Change section label (need to remove element then re-insert to re-run animation)
+    var el = $('#section-label');
+    el.before( el.clone(true) ).remove();
     $('#section-label').html(sectionId);
 
     // Update page no
